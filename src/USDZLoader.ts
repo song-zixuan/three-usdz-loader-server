@@ -2,6 +2,7 @@ import { RenderDelegateInterface } from './ThreeJsRenderDelegate';
 import { USDModule } from './USDModule';
 import { USDZInstance } from './USDZInstance';
 import { USDZLoaderUtils } from './Utils/utils';
+import * as path from 'path';
 export class USDZLoader {
   // The USD module from AutoDesk. Only one should be there at a the time.
   private usdModule: USDModule | null = null;
@@ -93,6 +94,45 @@ export class USDZLoader {
     // Load the raw data with the module
     try {
       const instance = this.loadUsdFileFromArrayBuffer(this.usdModule, file.name, result as ArrayBuffer, targetGroup);
+      // Notice end of loading
+      this.modelIsLoading = false;
+      return instance;
+    } catch (e) {
+      this.modelIsLoading = false;
+      throw e;
+    }
+  }
+  /**
+   * Loads a USDZ file into the target ThreeJS Group
+   * @param filePath
+   * @param targetGroup
+   */
+  async loadServerFile(filePath: string, targetGroup: THREE.Group): Promise<USDZInstance> {
+    if (this.modelIsLoading) {
+      this.modelIsLoading = false;
+      throw 'A model is already loading. Please wait.';
+    }
+
+    // Wait for module to be ready
+    await this.waitForModuleLoadingCompleted();
+
+    // Make sure module is ready
+    if (this.usdModule == null) {
+      this.modelIsLoading = false;
+      throw 'Cannot load file. The module could not be loaded properly.';
+    }
+
+    // Notice start of loading
+    this.modelIsLoading = true;
+
+    // Read the file as a byte array
+    //const result = await USDZLoaderUtils.readFileAsync(file);
+    // TODO: get file from server
+    const result = await USDZLoaderUtils.readServerFileAsync(filePath);
+
+    // Load the raw data with the module
+    try {
+      const instance = this.loadUsdFileFromArrayBuffer(this.usdModule, path.basename(filePath), result as ArrayBuffer, targetGroup);
       // Notice end of loading
       this.modelIsLoading = false;
       return instance;
