@@ -1,6 +1,6 @@
 {
   "name": "three-usdz-loader-server",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A basic USDZ file (Pixar Universal Scene Description) loader for ThreeJS",
   "main": "lib/USDZLoader.js",
   "types": "lib/USDZLoader.d.ts",
