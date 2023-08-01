@@ -132,7 +132,12 @@ export class USDZLoader {
 
     // Load the raw data with the module
     try {
-      const instance = this.loadUsdFileFromArrayBuffer(this.usdModule, path.basename(filePath), result as ArrayBuffer, targetGroup);
+      const instance = this.loadUsdFileFromArrayBuffer(
+        this.usdModule,
+        path.basename(filePath),
+        result as ArrayBuffer,
+        targetGroup,
+      );
       // Notice end of loading
       this.modelIsLoading = false;
       return instance;

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+// var fs = require('fs');
 
 export class USDZLoaderUtils {
   /**
@@ -19,23 +19,35 @@ export class USDZLoaderUtils {
       reader.readAsArrayBuffer(file);
     });
   }
-  /**
-   * Function to convert a file to ArrayBuffer
-   * @param filePath
-   * @returns
-   */
-  public static readServerFileAsync(filePath: string): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          const arrayBuffer = this.toArrayBuffer(data);
-          resolve(arrayBuffer);
-        }
-      });
-    });
+  public static async readServerFileAsync(filePath: string): Promise<ArrayBuffer> {
+    try {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        throw new Error('File not found or error during fetch');
+      }
+      const data = await response.arrayBuffer();
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
+  // /**
+  //  * Function to convert a file to ArrayBuffer
+  //  * @param filePath
+  //  * @returns
+  //  */
+  // public static readServerFileAsync(filePath: string): Promise<ArrayBuffer> {
+  //   return new Promise((resolve, reject) => {
+  //     fs.readFile(filePath, (err, data) => {
+  //       if (err) {
+  //         reject(err);
+  //       } else {
+  //         const arrayBuffer = this.toArrayBuffer(data);
+  //         resolve(arrayBuffer);
+  //       }
+  //     });
+  //   });
+  // }
   /**
    * Helper function to convert a Buffer to ArrayBuffer
    * @param buffer
@@ -49,32 +61,27 @@ export class USDZLoaderUtils {
     }
     return arrayBuffer;
   }
-//   /**
-//  * Read a file from server and returns an array buffer
-//  * @param filePath
-//  * @returns
-//  */
-//   async readServerFileAsync(filePath: string): Promise<string | ArrayBuffer | null> {
-//     return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-//       // TODO: get file from server and convert it to an ArrayBuffer
-//       const arrayBuffer = this.fileToArrayBuffer(filePath);
+  //   /**
+  //  * Read a file from server and returns an array buffer
+  //  * @param filePath
+  //  * @returns
+  //  */
+  //   async readServerFileAsync(filePath: string): Promise<string | ArrayBuffer | null> {
+  //     return new Promise<string | ArrayBuffer | null>((resolve, reject) => {
+  //       // TODO: get file from server and convert it to an ArrayBuffer
+  //       const arrayBuffer = this.fileToArrayBuffer(filePath);
 
-      
+  //       // const reader = new FileReader();
 
+  //       // reader.onload = () => {
+  //       //   resolve(reader.result);
+  //       // };
 
+  //       // reader.onerror = reject;
 
-
-//       // const reader = new FileReader();
-
-//       // reader.onload = () => {
-//       //   resolve(reader.result);
-//       // };
-
-//       // reader.onerror = reject;
-
-//       // reader.readAsArrayBuffer(file);
-//     });
-//   }
+  //       // reader.readAsArrayBuffer(file);
+  //     });
+  //   }
 
   /**
    * Generate random string GUID
